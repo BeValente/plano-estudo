@@ -294,6 +294,115 @@
       .g2 { grid-template-columns: 1fr; }
     }
 
+    /* ── RESPONSIVO MOBILE ────────────────────────────────────────────
+       Abaixo de 640px (telemóvel):
+       - A sidebar desaparece do lado esquerdo
+       - Aparece uma barra de navegação em baixo (tab bar)
+       - O conteúdo ocupa o ecrã todo
+       - Padding reduzido para aproveitar o espaço
+    ─────────────────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+
+      /* App passa a ser coluna em vez de linha */
+      .app {
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      /* Sidebar esconde-se completamente no mobile */
+      .sidebar { display: none; }
+
+      /* Conteúdo principal ocupa toda a largura */
+      .main {
+        flex: 1;
+        overflow-y: auto;
+        padding-bottom: 70px; /* espaço para a tab bar em baixo */
+      }
+
+      /* Topbar mais compacta */
+      .topbar {
+        padding: 12px 16px;
+      }
+      .ptitle { font-size: 16px; }
+      .psub { display: none; } /* esconde subtítulo para poupar espaço */
+
+      /* Conteúdo com menos padding */
+      .content { padding: 14px 16px; }
+
+      /* Grids de 4 passam a 2 colunas */
+      .g4 { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .g3 { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .g2 { grid-template-columns: 1fr; gap: 10px; }
+
+      /* Formulários em coluna */
+      .ir { flex-direction: column; }
+      .ir input, .ir select { min-width: 0; width: 100%; }
+
+      /* Horário em 1 coluna */
+      #hor-grid { grid-template-columns: 1fr !important; }
+
+      /* Calendário — células menores */
+      .cday { min-height: 44px; padding: 3px; }
+      .cdn { font-size: 9px; }
+      .cev { font-size: 7px; }
+
+      /* Projetos em 1 coluna */
+      #proj-list .g2 { grid-template-columns: 1fr; }
+
+      /* TAB BAR — barra de navegação fixa em baixo */
+      .tab-bar {
+        display: flex !important; /* mostrada só no mobile */
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        height: 62px;
+        background: var(--bg2);
+        border-top: 1px solid var(--bd2);
+        z-index: 100;
+        padding: 0 4px;
+        padding-bottom: env(safe-area-inset-bottom); /* iPhone notch */
+      }
+
+      /* Cada botão da tab bar */
+      .tab-bar button {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        background: none;
+        border: none;
+        color: var(--tx3);
+        font-size: 9px;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 6px 2px;
+        border-radius: var(--rs);
+        transition: all .15s;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+      }
+      .tab-bar button svg {
+        width: 20px;
+        height: 20px;
+      }
+      .tab-bar button.on {
+        color: var(--ac2);
+      }
+      .tab-bar button.on svg {
+        filter: drop-shadow(0 0 4px var(--ac));
+      }
+
+      /* Botão de tema aparece no topbar no mobile */
+      .mobile-theme {
+        display: flex !important;
+      }
+    }
+
+    /* Tab bar escondida no desktop */
+    .tab-bar { display: none; }
+    .mobile-theme { display: none; }
+
 
     /* ── CARDS DE ESTATÍSTICAS ───────────────────────────────────────
        Os 4 cards de números no topo de Dashboard e Análise.
@@ -602,6 +711,9 @@
         <div class="ptitle" id="pt">Dashboard</div>
         <div class="psub"   id="ps">Visão geral do plano</div>
       </div>
+      <button class="mobile-theme tbtn" onclick="toggleTheme()" style="padding:7px 10px;border-radius:var(--rs)">
+        <span id="ti2">☀️</span>
+      </button>
     </div>
 
     <!-- Área de conteúdo — contém todas as secções -->
@@ -1784,6 +1896,104 @@
   rMat();   // renderiza a lista de matérias
   upd();    // atualiza selects e badges
   rDash();  // renderiza o dashboard inicial
+
+</script>
+
+<!--
+  TAB BAR MOBILE — só visível em ecrãs pequenos (max-width: 640px)
+  Substitui a sidebar com atalhos para as secções mais usadas.
+-->
+<nav class="tab-bar">
+  <button class="on" id="tb-dashboard" onclick="goMobile('dashboard')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Início
+  </button>
+  <button id="tb-conteudos" onclick="goMobile('conteudos')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+    Tópicos
+  </button>
+  <button id="tb-horario" onclick="goMobile('horario')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    Horário
+  </button>
+  <button id="tb-tarefas" onclick="goMobile('tarefas')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    Tarefas
+  </button>
+  <button id="tb-mais" onclick="toggleMobileMenu()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>
+    Mais
+  </button>
+</nav>
+
+<!-- Menu "Mais" — abre ao clicar em "Mais" na tab bar -->
+<div id="mobile-menu" style="display:none;position:fixed;bottom:62px;left:0;right:0;background:var(--bg2);border-top:1px solid var(--bd2);z-index:99;padding:8px">
+  <div style="display:flex;flex-direction:column;gap:2px">
+    <button onclick="goMobile('materias');closeMM()" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:none;border:none;color:var(--tx2);font-size:13px;border-radius:var(--rs);cursor:pointer;width:100%;text-align:left">📚 Matérias</button>
+    <button onclick="goMobile('calendario');closeMM()" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:none;border:none;color:var(--tx2);font-size:13px;border-radius:var(--rs);cursor:pointer;width:100%;text-align:left">📅 Calendário</button>
+    <button onclick="goMobile('projetos');closeMM()" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:none;border:none;color:var(--tx2);font-size:13px;border-radius:var(--rs);cursor:pointer;width:100%;text-align:left">🚀 Projetos</button>
+    <button onclick="goMobile('recursos');closeMM()" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:none;border:none;color:var(--tx2);font-size:13px;border-radius:var(--rs);cursor:pointer;width:100%;text-align:left">🔗 Recursos</button>
+    <button onclick="goMobile('analise');closeMM()" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:none;border:none;color:var(--tx2);font-size:13px;border-radius:var(--rs);cursor:pointer;width:100%;text-align:left">📊 Análise</button>
+  </div>
+</div>
+
+<script>
+
+  // ═══════════════════════════════════════════════════════════════
+  // NAVEGAÇÃO MOBILE — tab bar em baixo
+  // ═══════════════════════════════════════════════════════════════
+
+  // IDs das tabs principais (que têm botão próprio na tab bar)
+  const TAB_BAR_PAGES = ['dashboard','conteudos','horario','tarefas'];
+
+  function goMobile(page) {
+    // Encontra o botão na sidebar que corresponde a esta página
+    // e usa o go() normal para mudar de secção
+    const sideBtn = document.querySelector('.nb.on');
+    // Limpa todas as tabs da tab bar
+    document.querySelectorAll('.tab-bar button').forEach(b => b.classList.remove('on'));
+    // Marca a tab correta como ativa (se existir na tab bar)
+    const tb = document.getElementById('tb-' + page);
+    if (tb) tb.classList.add('on');
+    else document.getElementById('tb-mais').classList.add('on');
+    // Navega — procura o botão da sidebar para esta página
+    const nbBtns = document.querySelectorAll('.nb');
+    let found = null;
+    nbBtns.forEach(b => {
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + page + "'")) found = b;
+    });
+    if (found) go(page, found);
+  }
+
+  function toggleMobileMenu() {
+    const mm = document.getElementById('mobile-menu');
+    mm.style.display = mm.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function closeMM() {
+    document.getElementById('mobile-menu').style.display = 'none';
+    document.querySelectorAll('.tab-bar button').forEach(b => b.classList.remove('on'));
+    document.getElementById('tb-mais').classList.add('on');
+  }
+
+  // Fecha o menu "Mais" ao clicar fora dele
+  document.addEventListener('click', function(e) {
+    const mm = document.getElementById('mobile-menu');
+    const tb = document.querySelector('.tab-bar');
+    if (mm && tb && !mm.contains(e.target) && !tb.contains(e.target)) {
+      mm.style.display = 'none';
+    }
+  });
+
+  // Sincroniza o botão de tema mobile com o desktop
+  const origToggleTheme = toggleTheme;
+  function toggleTheme() {
+    origToggleTheme();
+    // Sincroniza o ícone do botão mobile
+    const ti2 = document.getElementById('ti2');
+    const isDark = !document.getElementById('html-root').hasAttribute('data-light');
+    if (ti2) ti2.textContent = isDark ? '☀️' : '🌙';
+  }
 
 </script>
 </body>
